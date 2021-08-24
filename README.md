@@ -6,13 +6,19 @@ MaDOC or "My Doctor" is a sample application developed by Sqoop Data to demo and
 
 The application publishes a REST API with the following API endpoints:
 
-### `/users` [Actions Available: GET, POST]
-### `/users/{userID}` [Actions Available: GET, PUT]
-### `/appointments` [Actions Available: GET, POST]
-### `/appointments/{userID}` [Actions Available: GET]
-### `/appointments?username={username}&apptId={apptId}` [Actions Available: GET]
-### `/healthrecords` [Actions Available: GET, POST]
-### `/healthrecords/{healthRecordId}` [Actions Available: GET]
+**`/users`** [Actions Available: GET, POST]
+
+**`/users/{userID}`** [Actions Available: GET, PUT]
+
+**`/appointments`** [Actions Available: GET, POST]
+
+**`/appointments/{userID}`** [Actions Available: GET]
+
+**`/appointments?username={username}&apptId={apptId}`** [Actions Available: GET]
+
+**`/healthrecords`** [Actions Available: GET, POST]
+
+**`/healthrecords/{healthRecordId}`** [Actions Available: GET]
 
 Please note MaDoc is a Dockerized application, and therefore, Docker is a prerequisite.
 
