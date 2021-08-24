@@ -4,6 +4,13 @@ MaDOC or "My Doctor" is a sample application developed by Sqoop Data to demo and
 
 ## How to Use?
 
+To summarize, the following is available within MaDOC:
+
+* Three different types of users - `ADMIN`, `PATIENT`, `DOCTOR`;
+* Create Staff Users or Register Patients;
+* Staff Can Create Appointments;
+* Doctors Can Create Health Records;
+
 The application publishes a REST API with the following API endpoints:
 
 **`/users`** [Actions Available: GET, POST]
