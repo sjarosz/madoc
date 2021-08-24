@@ -27,7 +27,7 @@ The application publishes a REST API with the following API endpoints:
 
 **`/healthrecords/{healthRecordId}`** [Actions Available: GET]
 
-Please note MaDoc is a Dockerized application, and therefore, Docker is a prerequisite.
+Please note MaDOC is a Dockerized application, and therefore, Docker is a prerequisite.
 
 Run `docker-compose up --build` to bring the server up and running. 
 
