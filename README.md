@@ -19,14 +19,14 @@ To summarize, the following is available within MaDOC:
 | /users/{id}            | -            | GET    | Get User by ID                 |
 | /users                 | -            | GET    | Get All Users                  |
 | /users                 | -            | POST   | Create User                    |
-| /users                 | -            | PUT    | Update User                    |
+| /users/{id}            | -            | PUT    | Update User                    |
 | /appointments          | -            | POST   | Create Appointment             |
 | /appointments          | username     | GET    | Get All Appointments           |
 | /appointments/{apptId} | -            | GET    | Get Appointment by ID          |
 | /appointments          | -            | PUT    | Update Appointment             |
 | /healthrecords         | -            | POST   | Create Health Record           |
 | /healthrecords         | username     | GET    | Get Health Records for Patient |
-| /healthrecords         | -            | PUT    | Update Health Record           |
+| /healthrecords/{hrId}  | -            | PUT    | Update Health Record           |
 | /metrics               | -            | GET    | Get Prometheus Monitoring Data |
 
 ## License
