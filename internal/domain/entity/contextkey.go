@@ -1,3 +1,3 @@
-package model
+package entity
 
 type CtxKey string

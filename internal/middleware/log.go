@@ -3,8 +3,8 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/sqoopdata/madoc/pkg/application"
-	"github.com/sqoopdata/madoc/pkg/logger"
+	"github.com/sqoopdata/madoc/internal/application"
+	"github.com/sqoopdata/madoc/internal/logger"
 )
 
 func LogRequest(next http.HandlerFunc, a *application.Application) http.HandlerFunc {

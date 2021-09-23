@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS appointments (
     startTime   TIMESTAMP NOT NULL,
     endTime     TIMESTAMP NOT NULL,
     patient     VARCHAR(20) NOT NULL,
+    status      INTEGER NOT NULL,
     createdBy   VARCHAR(20) NOT NULL,
     created     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_users

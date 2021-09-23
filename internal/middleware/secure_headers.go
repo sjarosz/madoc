@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/sqoopdata/madoc/pkg/application"
+	"github.com/sqoopdata/madoc/internal/application"
 )
 
 // SecureHeaders add required secure headers to a response

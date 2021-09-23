@@ -5,21 +5,21 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/sqoopdata/madoc/cmd/api/model"
-	"github.com/sqoopdata/madoc/pkg/application"
-	"github.com/sqoopdata/madoc/pkg/middleware"
+	"github.com/sqoopdata/madoc/internal/application"
+	"github.com/sqoopdata/madoc/internal/domain/entity"
+	"github.com/sqoopdata/madoc/internal/middleware"
 )
 
-func GetApptByApptId(app *application.Application) http.HandlerFunc {
+func GetApptById(app *application.Application) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
 
-		apptId := r.Context().Value(model.CtxKey("apptId"))
-		appt := &model.Appointment{ApptId: apptId.(int)}
+		apptId := r.Context().Value(entity.CtxKey("apptId"))
+		appt, err := app.AppointmentService.GetAppointment(r.Context(), apptId.(int))
 
-		if err := appt.GetByApptId(r.Context(), app); err != nil {
+		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprintf(w, "no appointments available")
+			fmt.Fprint(w, "no appointments available")
 			return
 		}
 
@@ -28,46 +28,44 @@ func GetApptByApptId(app *application.Application) http.HandlerFunc {
 	}
 }
 
-func GetApptByUsername(app *application.Application) http.HandlerFunc {
+func GetAllAppointments(app *application.Application) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
 
-		username := r.Context().Value(model.CtxKey("username"))
-		appt := &model.Appointment{Patient: username.(string)}
-
-		appts, err := appt.GetByUsername(r.Context(), app)
+		username := r.Context().Value(entity.CtxKey("username"))
+		appts, err := app.AppointmentService.GetAllAppointments(r.Context(), username.(string))
 
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprintf(w, "Oops")
+			fmt.Fprint(w, err.Error())
 			return
 		}
 
-		if len(appts) > 0 {
+		if len(*appts) > 0 {
 			response, _ := json.Marshal(appts)
 			w.Write(response)
 		} else {
-			fmt.Fprintf(w, "No appointments available")
+			fmt.Fprint(w, "No appointments available")
 		}
 	}
 }
 
-func HandleRequestByUsername(app *application.Application) http.HandlerFunc {
+func HandleGetRequest(app *application.Application) http.HandlerFunc {
 	mdw := []middleware.Middleware{
 		middleware.LogRequest,
 		middleware.SecureHeaders,
-		validateRequest,
+		validateGetRequest,
 	}
 
-	return middleware.Chain(GetApptByUsername(app), app, mdw...)
+	return middleware.Chain(GetApptById(app), app, mdw...)
 }
 
-func HandleRequestByApptId(app *application.Application) http.HandlerFunc {
+func HandleGetAllRequest(app *application.Application) http.HandlerFunc {
 	mdw := []middleware.Middleware{
 		middleware.LogRequest,
 		middleware.SecureHeaders,
-		validateRequestById,
+		validateGetAllRequest,
 	}
 
-	return middleware.Chain(GetApptByApptId(app), app, mdw...)
+	return middleware.Chain(GetAllAppointments(app), app, mdw...)
 }

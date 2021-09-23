@@ -7,27 +7,27 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/sqoopdata/madoc/cmd/api/model"
-	"github.com/sqoopdata/madoc/pkg/application"
-	"github.com/sqoopdata/madoc/pkg/middleware"
+	"github.com/sqoopdata/madoc/internal/application"
+	"github.com/sqoopdata/madoc/internal/domain/entity"
+	"github.com/sqoopdata/madoc/internal/middleware"
 )
 
 func getUser(app *application.Application) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
 
-		id := r.Context().Value(model.CtxKey("id"))
-		user := &model.User{Username: id.(string)}
+		id := r.Context().Value(entity.CtxKey("id"))
+		user, err := app.UserService.GetUser(r.Context(), id.(string))
 
-		if err := user.GetUserByUsername(r.Context(), app); err != nil {
+		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				w.WriteHeader(http.StatusPreconditionFailed)
-				fmt.Fprintf(w, "user does not exist")
+				fmt.Fprint(w, "user does not exist")
 				return
 			}
 
 			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprintf(w, "Oops")
+			fmt.Fprint(w, "Something went wrong. Try again!")
 			return
 		}
 
@@ -38,11 +38,11 @@ func getUser(app *application.Application) http.HandlerFunc {
 	}
 }
 
-func HandleRequest(app *application.Application) http.HandlerFunc {
+func HandleGetRequest(app *application.Application) http.HandlerFunc {
 	mdw := []middleware.Middleware{
 		middleware.LogRequest,
 		middleware.SecureHeaders,
-		validateRequest,
+		validateGetRequest,
 	}
 
 	return middleware.Chain(getUser(app), app, mdw...)

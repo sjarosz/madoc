@@ -7,26 +7,25 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/sqoopdata/madoc/cmd/api/model"
-	"github.com/sqoopdata/madoc/pkg/application"
-	"github.com/sqoopdata/madoc/pkg/middleware"
+	"github.com/sqoopdata/madoc/internal/application"
+	"github.com/sqoopdata/madoc/internal/middleware"
 )
 
 func getAllUsers(app *application.Application) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
 
-		users, err := model.GetAllUsers(r.Context(), app)
+		users, err := app.UserService.GetAllUsers(r.Context())
 
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				w.WriteHeader(http.StatusPreconditionFailed)
-				fmt.Fprintf(w, "no users found")
+				fmt.Fprint(w, "no users found")
 				return
 			}
 
 			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprintf(w, err.Error())
+			fmt.Fprint(w, "Something went wrong. Try again!")
 			return
 		}
 
@@ -37,7 +36,7 @@ func getAllUsers(app *application.Application) http.HandlerFunc {
 	}
 }
 
-func HandleRequestAll(app *application.Application) http.HandlerFunc {
+func HandleGetAllRequest(app *application.Application) http.HandlerFunc {
 	mdw := []middleware.Middleware{
 		middleware.LogRequest,
 		middleware.SecureHeaders,

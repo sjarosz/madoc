@@ -5,21 +5,21 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/sqoopdata/madoc/cmd/api/model"
-	"github.com/sqoopdata/madoc/pkg/application"
-	"github.com/sqoopdata/madoc/pkg/middleware"
+	"github.com/sqoopdata/madoc/internal/application"
+	"github.com/sqoopdata/madoc/internal/domain/entity"
+	"github.com/sqoopdata/madoc/internal/middleware"
 )
 
 func update(app *application.Application) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
 
-		uO := r.Context().Value(model.CtxKey("user"))
-		user := uO.(*model.User)
+		uObj := r.Context().Value(entity.CtxKey("user"))
+		user := uObj.(*entity.User)
 
-		if err := user.Update(r.Context(), app); err != nil {
+		if err := app.UserService.UpdateUser(r.Context(), user); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprintf(w, err.Error())
+			fmt.Fprint(w, err.Error())
 			return
 		}
 
@@ -28,11 +28,11 @@ func update(app *application.Application) http.HandlerFunc {
 	}
 }
 
-func HandleRequest(app *application.Application) http.HandlerFunc {
+func HandleUpdateRequest(app *application.Application) http.HandlerFunc {
 	mdw := []middleware.Middleware{
 		middleware.LogRequest,
 		middleware.SecureHeaders,
-		validateRequest,
+		validateUpdateRequest,
 	}
 
 	return middleware.Chain(update(app), app, mdw...)

@@ -7,11 +7,11 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"github.com/sqoopdata/madoc/cmd/api/model"
-	"github.com/sqoopdata/madoc/pkg/application"
+	"github.com/sqoopdata/madoc/internal/application"
+	"github.com/sqoopdata/madoc/internal/domain/entity"
 )
 
-func validateRequestById(next http.HandlerFunc, a *application.Application) http.HandlerFunc {
+func validateGetRequest(next http.HandlerFunc, a *application.Application) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
 		apptId := params["apptId"]
@@ -19,12 +19,12 @@ func validateRequestById(next http.HandlerFunc, a *application.Application) http
 
 		if err != nil {
 			w.WriteHeader((http.StatusPreconditionFailed))
-			fmt.Fprintf(w, "malformed apptId")
+			fmt.Fprint(w, "malformed apptId")
 			return
 
 		}
 
-		ctx := context.WithValue(r.Context(), model.CtxKey("apptId"), id)
+		ctx := context.WithValue(r.Context(), entity.CtxKey("apptId"), id)
 		r = r.WithContext(ctx)
 
 		next(w, r)

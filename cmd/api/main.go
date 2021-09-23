@@ -3,10 +3,10 @@ package main
 import (
 	"github.com/joho/godotenv"
 	"github.com/sqoopdata/madoc/cmd/api/router"
-	"github.com/sqoopdata/madoc/pkg/application"
-	"github.com/sqoopdata/madoc/pkg/exithandler"
-	"github.com/sqoopdata/madoc/pkg/logger"
-	"github.com/sqoopdata/madoc/pkg/server"
+	"github.com/sqoopdata/madoc/internal/application"
+	"github.com/sqoopdata/madoc/internal/exithandler"
+	"github.com/sqoopdata/madoc/internal/logger"
+	"github.com/sqoopdata/madoc/internal/server"
 )
 
 func main() {

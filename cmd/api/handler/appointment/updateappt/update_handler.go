@@ -1,4 +1,4 @@
-package createhealthrecord
+package updateappt
 
 import (
 	"encoding/json"
@@ -10,32 +10,32 @@ import (
 	"github.com/sqoopdata/madoc/internal/middleware"
 )
 
-func create(app *application.Application) http.HandlerFunc {
+func UpdateAppt(app *application.Application) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
 
-		rO := r.Context().Value(entity.CtxKey("record"))
-		record := rO.(*entity.HealthRecord)
+		aObj := r.Context().Value(entity.CtxKey("appt"))
+		appt := aObj.(*entity.Appointment)
 
-		cRecord, err := app.HealthRecordService.AddHealthRecord(r.Context(), record)
+		cAppt, err := app.AppointmentService.UpdateAppointment(r.Context(), appt)
 
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprint(w, err.Error())
+			fmt.Fprint(w, "Oops")
 			return
 		}
 
-		response, _ := json.Marshal(cRecord)
+		response, _ := json.Marshal(cAppt)
 		w.Write(response)
 	}
 }
 
-func HandleCreateRequest(app *application.Application) http.HandlerFunc {
+func HandleUpdateRequest(app *application.Application) http.HandlerFunc {
 	mdw := []middleware.Middleware{
 		middleware.LogRequest,
 		middleware.SecureHeaders,
-		validateCreateRequest,
+		validateUpdateRequest,
 	}
 
-	return middleware.Chain(create(app), app, mdw...)
+	return middleware.Chain(UpdateAppt(app), app, mdw...)
 }

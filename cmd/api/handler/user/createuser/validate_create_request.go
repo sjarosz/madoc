@@ -2,31 +2,28 @@ package createuser
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"regexp"
 
-	"github.com/sqoopdata/madoc/cmd/api/model"
-	"github.com/sqoopdata/madoc/pkg/application"
+	"github.com/sqoopdata/madoc/cmd/api/handler/user/uservalidation"
+	"github.com/sqoopdata/madoc/internal/application"
+	"github.com/sqoopdata/madoc/internal/domain/entity"
 )
 
 var IsAlphabets = regexp.MustCompile(`^[a-zA-Z]+$`).MatchString
 
-func validateRequest(next http.HandlerFunc, a *application.Application) http.HandlerFunc {
+func validateCreateRequest(next http.HandlerFunc, a *application.Application) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		defer r.Body.Close()
+		user, err := uservalidation.RunCreateUserValidation(r, a)
 
-		user := &model.User{}
-		json.NewDecoder(r.Body).Decode(user)
-
-		if !IsAlphabets(user.Username) {
+		if err != nil {
 			w.WriteHeader((http.StatusPreconditionFailed))
-			fmt.Fprintf(w, "malformed username")
+			fmt.Fprint(w, err.Error())
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), model.CtxKey("user"), user)
+		ctx := context.WithValue(r.Context(), entity.CtxKey("user"), user)
 		r = r.WithContext(ctx)
 		next(w, r)
 	}

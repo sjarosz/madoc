@@ -7,29 +7,27 @@ MaDOC or "My Doctor" is a sample application developed by Sqoop Data to demo and
 To summarize, the following is available within MaDOC:
 
 * Three different types of users - `ADMIN`, `PATIENT`, `DOCTOR`;
-* Create Staff Users or Register Patients;
-* Staff Can Create Appointments;
-* Doctors Can Create Health Records;
+* CRU Users;
+* CRU Appointments;
+* CRU Health Records;
 
-The application publishes a REST API with the following API endpoints:
+## Endpoints
 
-**`/users`** [Actions Available: GET, POST]
-
-**`/users/{userID}`** [Actions Available: GET, PUT]
-
-**`/appointments`** [Actions Available: GET, POST]
-
-**`/appointments/{userID}`** [Actions Available: GET]
-
-**`/appointments?username={username}&apptId={apptId}`** [Actions Available: GET]
-
-**`/healthrecords`** [Actions Available: GET, POST]
-
-**`/healthrecords/{healthRecordId}`** [Actions Available: GET]
-
-Please note MaDOC is a Dockerized application, and therefore, Docker is a prerequisite.
-
-Run `docker-compose up --build` to bring the server up and running. 
+| Endpoint               | Query Params | Action | Description                    |
+|------------------------|--------------|--------|--------------------------------|
+| /                      | -            | GET    | Index                          |
+| /users/{id}            | -            | GET    | Get User by ID                 |
+| /users                 | -            | GET    | Get All Users                  |
+| /users                 | -            | POST   | Create User                    |
+| /users                 | -            | PUT    | Update User                    |
+| /appointments          | -            | POST   | Create Appointment             |
+| /appointments          | username     | GET    | Get All Appointments           |
+| /appointments/{apptId} | -            | GET    | Get Appointment by ID          |
+| /appointments          | -            | PUT    | Update Appointment             |
+| /healthrecords         | -            | POST   | Create Health Record           |
+| /healthrecords         | username     | GET    | Get Health Records for Patient |
+| /healthrecords         | -            | PUT    | Update Health Record           |
+| /metrics               | -            | GET    | Get Prometheus Monitoring Data |
 
 ## License
 

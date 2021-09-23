@@ -5,21 +5,21 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/sqoopdata/madoc/cmd/api/model"
-	"github.com/sqoopdata/madoc/pkg/application"
-	"github.com/sqoopdata/madoc/pkg/middleware"
+	"github.com/sqoopdata/madoc/internal/application"
+	"github.com/sqoopdata/madoc/internal/domain/entity"
+	"github.com/sqoopdata/madoc/internal/middleware"
 )
 
 func create(app *application.Application) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
 
-		aO := r.Context().Value(model.CtxKey("appt"))
-		appt := aO.(*model.Appointment)
+		aObj := r.Context().Value(entity.CtxKey("appt"))
+		appt := aObj.(*entity.Appointment)
 
-		if err := appt.Create(r.Context(), app); err != nil {
+		if err := app.AppointmentService.AddAppointment(r.Context(), appt); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprintf(w, err.Error())
+			fmt.Fprint(w, err.Error())
 			return
 		}
 
@@ -28,11 +28,11 @@ func create(app *application.Application) http.HandlerFunc {
 	}
 }
 
-func HandleRequest(app *application.Application) http.HandlerFunc {
+func HandleCreateRequest(app *application.Application) http.HandlerFunc {
 	mdw := []middleware.Middleware{
 		middleware.LogRequest,
 		middleware.SecureHeaders,
-		validateRequest,
+		validateCreateRequest,
 	}
 
 	return middleware.Chain(create(app), app, mdw...)

@@ -2,44 +2,28 @@ package createappt
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"regexp"
-	"time"
 
-	"github.com/sqoopdata/madoc/cmd/api/model"
-	"github.com/sqoopdata/madoc/pkg/application"
+	"github.com/sqoopdata/madoc/cmd/api/handler/appointment/appointmentvalidation"
+	"github.com/sqoopdata/madoc/internal/application"
+	"github.com/sqoopdata/madoc/internal/domain/entity"
 )
 
 var IsAlphabets = regexp.MustCompile(`^[a-zA-Z]+$`).MatchString
 
-func validateRequest(next http.HandlerFunc, a *application.Application) http.HandlerFunc {
+func validateCreateRequest(next http.HandlerFunc, a *application.Application) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		defer r.Body.Close()
+		appointment, err := appointmentvalidation.RunCreateApptValidation(r, a)
 
-		appointment := &model.Appointment{}
-		json.NewDecoder(r.Body).Decode(appointment)
-
-		if time.Now().After(appointment.StartTime) {
+		if err != nil {
 			w.WriteHeader((http.StatusPreconditionFailed))
-			fmt.Fprintf(w, "appointment start time must be in the future")
+			fmt.Fprint(w, err.Error())
 			return
 		}
 
-		if appointment.StartTime.After(appointment.EndTime) {
-			w.WriteHeader((http.StatusPreconditionFailed))
-			fmt.Fprintf(w, "appointment start time must be before end time")
-			return
-		}
-
-		if appointment.EndTime.Sub(appointment.StartTime).Minutes() > 30 {
-			w.WriteHeader((http.StatusPreconditionFailed))
-			fmt.Fprintf(w, "appointment cannot exceed 30 mins window")
-			return
-		}
-
-		ctx := context.WithValue(r.Context(), model.CtxKey("appt"), appointment)
+		ctx := context.WithValue(r.Context(), entity.CtxKey("appt"), appointment)
 		r = r.WithContext(ctx)
 		next(w, r)
 	}

@@ -5,69 +5,40 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/sqoopdata/madoc/cmd/api/model"
-	"github.com/sqoopdata/madoc/pkg/application"
-	"github.com/sqoopdata/madoc/pkg/middleware"
+	"github.com/sqoopdata/madoc/internal/application"
+	"github.com/sqoopdata/madoc/internal/domain/entity"
+	"github.com/sqoopdata/madoc/internal/middleware"
 )
 
-func GetHealthRecordByRecordId(app *application.Application) http.HandlerFunc {
+func getHealthRecordByPatient(app *application.Application) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
 
-		recordId := r.Context().Value(model.CtxKey("recordId"))
-		record := &model.HealthRecord{HealthRecordId: recordId.(int)}
+		patient := r.Context().Value(entity.CtxKey("username"))
 
-		if err := record.GetByHealthRecordId(r.Context(), app); err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprintf(w, err.Error())
-			return
-		}
-
-		response, _ := json.Marshal(record)
-		w.Write(response)
-	}
-}
-
-func GetHealthRecordByUsername(app *application.Application) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		defer r.Body.Close()
-
-		username := r.Context().Value(model.CtxKey("username"))
-		record := &model.HealthRecord{Patient: username.(string)}
-
-		records, err := record.GetByUsername(r.Context(), app)
+		records, err := app.HealthRecordService.GetByPatient(r.Context(), patient.(string))
 
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprintf(w, err.Error())
+			fmt.Fprint(w, err.Error())
 			return
 		}
 
-		if len(records) > 0 {
+		if len(*records) > 0 {
 			response, _ := json.Marshal(records)
 			w.Write(response)
 		} else {
-			fmt.Fprintf(w, "No health records available")
+			fmt.Fprint(w, "No records found!")
 		}
 	}
 }
 
-func HandleRequestByUsername(app *application.Application) http.HandlerFunc {
+func HandleGetByPatientRequest(app *application.Application) http.HandlerFunc {
 	mdw := []middleware.Middleware{
 		middleware.LogRequest,
 		middleware.SecureHeaders,
-		validateRequest,
+		validateGetRequest,
 	}
 
-	return middleware.Chain(GetHealthRecordByUsername(app), app, mdw...)
-}
-
-func HandleRequestByHealthRecordId(app *application.Application) http.HandlerFunc {
-	mdw := []middleware.Middleware{
-		middleware.LogRequest,
-		middleware.SecureHeaders,
-		validateRequestById,
-	}
-
-	return middleware.Chain(GetHealthRecordByRecordId(app), app, mdw...)
+	return middleware.Chain(getHealthRecordByPatient(app), app, mdw...)
 }

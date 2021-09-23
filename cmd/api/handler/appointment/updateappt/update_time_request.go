@@ -1,21 +1,18 @@
-package updateuser
+package updateappt
 
 import (
 	"context"
 	"fmt"
 	"net/http"
-	"regexp"
 
-	"github.com/sqoopdata/madoc/cmd/api/handler/user/uservalidation"
+	"github.com/sqoopdata/madoc/cmd/api/handler/appointment/appointmentvalidation"
 	"github.com/sqoopdata/madoc/internal/application"
 	"github.com/sqoopdata/madoc/internal/domain/entity"
 )
 
-var IsAlphabets = regexp.MustCompile(`^[a-zA-Z]+$`).MatchString
-
 func validateUpdateRequest(next http.HandlerFunc, a *application.Application) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		user, err := uservalidation.RunUpdateUserValidation(r, a)
+		appointment, err := appointmentvalidation.RunUpdateApptValidation(r, a)
 
 		if err != nil {
 			w.WriteHeader((http.StatusPreconditionFailed))
@@ -23,8 +20,9 @@ func validateUpdateRequest(next http.HandlerFunc, a *application.Application) ht
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), entity.CtxKey("user"), user)
+		ctx := context.WithValue(r.Context(), entity.CtxKey("appt"), appointment)
 		r = r.WithContext(ctx)
+
 		next(w, r)
 	}
 }

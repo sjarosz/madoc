@@ -5,7 +5,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/sqoopdata/madoc/pkg/logger"
+	"github.com/sqoopdata/madoc/internal/logger"
 )
 
 // Init accepts a callback function that will be invoked when program exits

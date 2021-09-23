@@ -1,10 +1,7 @@
-package model
+package entity
 
 import (
-	"context"
 	"time"
-
-	"github.com/sqoopdata/madoc/pkg/application"
 )
 
 var (
@@ -32,6 +29,7 @@ type User struct {
 	UserType UType     `json:"utype"`
 }
 
+/*
 // Create creates user in the db
 func (u *User) Create(ctx context.Context, app *application.Application) error {
 	err := app.DB.Client.QueryRowContext(ctx, USER_INSERT_STMT, u.Username, u.UserType, u.FName, u.LName).Scan(&u.Id, &u.Username, &u.Created)
@@ -88,3 +86,4 @@ func (u *User) Update(ctx context.Context, app *application.Application) error {
 
 	return nil
 }
+*/

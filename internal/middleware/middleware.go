@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/sqoopdata/madoc/pkg/application"
+	"github.com/sqoopdata/madoc/internal/application"
 )
 
 type Middleware func(http.HandlerFunc, *application.Application) http.HandlerFunc

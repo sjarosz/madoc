@@ -1,21 +1,18 @@
-package createhealthrecord
+package updatehealthrecord
 
 import (
 	"context"
 	"fmt"
 	"net/http"
-	"regexp"
 
 	"github.com/sqoopdata/madoc/cmd/api/handler/healthrecord/healthrecordvalidation"
 	"github.com/sqoopdata/madoc/internal/application"
 	"github.com/sqoopdata/madoc/internal/domain/entity"
 )
 
-var IsAlphabets = regexp.MustCompile(`^[a-zA-Z]+$`).MatchString
-
-func validateCreateRequest(next http.HandlerFunc, a *application.Application) http.HandlerFunc {
+func validateUpdateRequest(next http.HandlerFunc, a *application.Application) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		record, err := healthrecordvalidation.RunCreateRecordValidation(r, a)
+		record, err := healthrecordvalidation.RunUpdateRecordValidation(r, a)
 
 		if err != nil {
 			w.WriteHeader((http.StatusPreconditionFailed))
