@@ -21,7 +21,7 @@ func UpdateAppt(app *application.Application) http.HandlerFunc {
 
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprint(w, "Oops")
+			fmt.Fprint(w, err)
 			return
 		}
 

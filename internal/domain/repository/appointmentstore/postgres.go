@@ -12,7 +12,7 @@ var (
 	APPT_INSERT_STMT     = "INSERT INTO appointments(startTime, endTime, patient, status, createdBy, created) VALUES($1, $2, $3, 1, $4, current_timestamp) RETURNING apptId, startTime, endTime, patient, status, createdBy, created"
 	APPT_SELECT_DISTINCT = "SELECT DISTINCT apptId, startTime, endTime, patient, status, createdBy, created FROM appointments WHERE apptId = $1"
 	APPT_SELECT_ALL      = "SELECT * FROM APPOINTMENTS WHERE patient = $1 and startTime >= now()"
-	APPT_UPDATE          = "UPDATE appointments SET startTime = $3, endTime = $4, status = $5 WHERE apptId = $1 and patient = $2 RETURNING apptId, startTime, endTime, patient, status, createdBy, created"
+	APPT_UPDATE          = "UPDATE appointments SET startTime = $2, endTime = $3, status = $4 WHERE apptId = $1 RETURNING apptId, startTime, endTime, patient, status, createdBy, created"
 )
 
 type PGAppointmentStore struct {
@@ -46,7 +46,7 @@ func (s *PGAppointmentStore) Get(ctx context.Context, id int) (*entity.Appointme
 }
 func (s *PGAppointmentStore) Update(ctx context.Context, a *entity.Appointment) (*entity.Appointment, error) {
 	var cAppt entity.Appointment
-	err := s.store.QueryRowContext(ctx, APPT_UPDATE, a.ApptId, a.Patient, a.StartTime, a.EndTime, a.Status).Scan(&cAppt.ApptId, &cAppt.StartTime, &cAppt.EndTime, &cAppt.Status, &cAppt.Patient, &cAppt.CreatedBy, &cAppt.Created)
+	err := s.store.QueryRowContext(ctx, APPT_UPDATE, a.ApptId, a.StartTime, a.EndTime, a.Status).Scan(&cAppt.ApptId, &cAppt.StartTime, &cAppt.EndTime, &cAppt.Patient, &cAppt.Status, &cAppt.CreatedBy, &cAppt.Created)
 
 	if err != nil {
 		return nil, err
