@@ -1,0 +1,12 @@
+apiVersion: skaffold/v2beta29
+kind: Config
+metadata:
+  name: madoc
+deploy:
+  kubectl:
+    manifests:
+    - env-configmap.yaml
+    - pg-claim1-persistentvolumeclaim.yaml
+    - sdvolume-persistentvolumeclaim.yaml
+    - pg-pod.yaml
+    - pg-service.yaml

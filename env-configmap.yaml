@@ -1,0 +1,14 @@
+apiVersion: v1
+data:
+  API_PORT: "9080"
+  POSTGRES_DB: sdbase
+  POSTGRES_HOST: pg
+  POSTGRES_PASSWORD: password
+  POSTGRES_PORT: "5432"
+  POSTGRES_USER: postgres
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: sd-api-env
+  name: env

@@ -1,0 +1,15 @@
+apiVersion: skaffold/v2beta29
+kind: Config
+metadata:
+  name: madoc
+build:
+  artifacts:
+  - image: sd-api
+    docker:
+      dockerfile: Dockerfile.dev
+deploy:
+  kubectl:
+    manifests:
+    - sd-api-deployment.yaml
+    - sd-api-service.yaml
+    - sd-network-networkpolicy.yaml

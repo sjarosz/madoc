@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yml
+    kompose.version: 1.26.1 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.network/sd-network: "true"
+    io.kompose.service: pg
+  name: pg
+spec:
+  containers:
+    - env:
+        - name: API_PORT
+          valueFrom:
+            configMapKeyRef:
+              key: API_PORT
+              name: env
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              key: POSTGRES_DB
+              name: env
+        - name: POSTGRES_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: POSTGRES_HOST
+              name: env
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: POSTGRES_PASSWORD
+              name: env
+        - name: POSTGRES_PORT
+          valueFrom:
+            configMapKeyRef:
+              key: POSTGRES_PORT
+              name: env
+        - name: POSTGRES_USER
+          valueFrom:
+            configMapKeyRef:
+              key: POSTGRES_USER
+              name: env
+      image: postgres:13
+      name: pg
+      ports:
+        - containerPort: 5432
+      resources: {}
+      volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+         #setting subPath will fix your issue it can be pgdata or 
+         #postgres or any other folder name according to your 
+         #choice.
+          subPath: postgres 
+          name: sdvolume
+        - mountPath: /docker-entrypoint-initdb.d/
+          name: pg-claim1
+  restartPolicy: OnFailure
+  volumes:
+    - name: sdvolume
+      persistentVolumeClaim:
+        claimName: sdvolume
+    - name: pg-claim1
+      persistentVolumeClaim:
+        claimName: pg-claim1
+status: {}
