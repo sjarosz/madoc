@@ -2,6 +2,14 @@
 
 MaDOC or "My Doctor" is a sample application developed by Sqoop Data to demo and test various Identity & Access Management use cases.
 
+## How to build and start
+docker compose build
+docker compose up
+
+## To start in Kubernetes
+skaffold run -f skaffold-pg.yaml; skaffold dev -f skaffold.yaml --default-repo <your-repo> 
+
+
 ## How to Use?
 
 To summarize, the following is available within MaDOC:
